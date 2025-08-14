@@ -1,4 +1,4 @@
-# Manufacturing Calculator App
+# Sprocket Costing Calculator
 
 A Flask-based web application for calculating manufacturing costs and pricing for chain sprockets and hubs. This tool helps manufacturers determine production costs, pricing strategies, and component specifications.
 
@@ -15,6 +15,7 @@ A Flask-based web application for calculating manufacturing costs and pricing fo
 - **Backend**: Flask (Python)
 - **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5
 - **Deployment**: Ready for Render, Heroku, Railway, and other platforms
+- **Company**: Tripcon Industries
 
 ## Local Development
 

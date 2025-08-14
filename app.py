@@ -60,8 +60,8 @@ def calculate():
         
         # Step 5: Price chart calculations
         price_chart = []
-        multipliers = [1.4, 1.5, 1.6, 1.7, 1.8]
-        margins = ['40%', '50%', '60%', '70%', '80%']
+        multipliers = [1.3, 1.4, 1.5]
+        margins = ['30%', '40%', '50%']
         
         for i, multiplier in enumerate(multipliers):
             selling_price = total_production_cost * multiplier
