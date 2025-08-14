@@ -38,6 +38,8 @@
             bottom: 0;
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
             opacity: 0.3;
+            pointer-events: none;
+            z-index: 1;
         }
         .header h1 {
             font-size: 2.3rem;
@@ -58,6 +60,8 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 20px;
+            position: relative;
+            z-index: 5;
         }
         .header-left {
             display: flex;
@@ -67,6 +71,8 @@
         .header-right {
             display: flex;
             align-items: center;
+            position: relative;
+            z-index: 10;
         }
         .reference-link {
             background: rgba(255, 255, 255, 0.1);
@@ -77,11 +83,16 @@
             font-size: 14px;
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            position: relative;
+            z-index: 10;
+            display: inline-block;
         }
         .reference-link:hover {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             transform: translateY(-1px);
+            text-decoration: none;
         }
         .header p {
             margin: 10px 0 0 0;
@@ -448,7 +459,8 @@
                     </div>
                     <div class="header-right">
                         <a href="https://www.martinsprocket.com/docs//catalogs/power%20transmission/2_sprocket%20catalog/sprocket-catalog.pdf" 
-                           target="_blank" class="reference-link">
+                           target="_blank" class="reference-link"
+                           onclick="console.log('Reference link clicked');">
                             <i class="fas fa-book"></i> Reference Catalog
                         </a>
                     </div>
