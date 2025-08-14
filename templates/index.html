@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manufacturing Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            min-height: 100vh;
+        }
+        .main-container {
+            max-width: 1300px;
+            margin: 25px auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 35px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        .header h1 {
+            font-size: 2.3rem;
+            font-weight: 300;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-weight: 300;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        .form-section {
+            padding: 35px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .form-section:last-child {
+            border-bottom: none;
+        }
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+        .btn-calculate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 16px 36px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        .results-section {
+            padding: 40px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        .table {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            font-size: 14px;
+            background: white;
+        }
+        .table thead th {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 16px 20px;
+            font-size: 14px;
+        }
+        .table tbody td {
+            padding: 16px 20px;
+            border-color: #f1f3f4;
+            vertical-align: middle;
+        }
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .product-name {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 60px;
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 16px 20px;
+            font-size: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-export {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            color: white;
+            margin: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(108, 117, 125, 0.3);
+        }
+        .btn-export:hover {
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+        }
+        .cost-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        .cost-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .cost-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        .cost-card h5 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-check {
+            margin-bottom: 12px;
+        }
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        .form-check-label {
+            font-size: 15px;
+            color: #495057;
+            font-weight: 500;
+        }
+        .main-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+        }
+        .product-params {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .product-params h6 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 22px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        .pcd-card {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 2px solid #2196f3;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.1);
+            margin-bottom: 25px;
+        }
+        .pcd-card h6 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1565c0;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2196f3;
+        }
+        .parameter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+        }
+        .parameter-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .parameter-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .input-group-text {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #e9ecef;
+            border-left: none;
+            color: #495057;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 65px;
+            justify-content: center;
+        }
+        .input-group .form-control {
+            border-right: none;
+        }
+        .input-group .form-control:focus {
+            border-right: none;
+        }
+        .input-group .form-control:focus + .input-group-text {
+            border-color: #667eea;
+        }
+        .unit-select {
+            border: 2px solid #e9ecef;
+            border-left: none;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #495057;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 0 10px;
+            min-width: 65px;
+        }
+        .unit-select:focus {
+            border-color: #667eea;
+            box-shadow: none;
+        }
+        .no-unit-input {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+        }
+        .no-unit-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        .pcd-auto-display {
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 12px;
+            text-align: center;
+            font-weight: 600;
+            color: #2e7d32;
+            font-size: 14px;
+        }
+        .pcd-manual-input {
+            margin-top: 12px;
+            padding: 18px;
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: 2px solid #ff9800;
+            border-radius: 10px;
+        }
+        .pcd-manual-input .parameter-label {
+            color: #e65100;
+            margin-bottom: 10px;
+        }
+        .pcd-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .pcd-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid rgba(33, 150, 243, 0.2);
+            transition: all 0.3s ease;
+        }
+        .pcd-option:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(33, 150, 243, 0.4);
+        }
+        .pcd-option .form-check {
+            margin-bottom: 0;
+            flex: 1;
+        }
+        .pcd-value-display {
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            border: 1px solid #4caf50;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-weight: 600;
+            color: #2e7d32;
+            font-size: 13px;
+            min-width: 80px;
+            text-align: center;
+        }
+        .pcd-manual-input-inline {
+            min-width: 200px;
+        }
+        .pcd-manual-input-inline .input-group {
+            width: 100%;
+        }
+        .pcd-manual-input-inline .form-control {
+            font-size: 13px;
+            padding: 6px 10px;
+            border-radius: 6px 0 0 6px;
+        }
+        .pcd-manual-input-inline .unit-select {
+            font-size: 12px;
+            padding: 0 8px;
+            min-width: 60px;
+            border-radius: 0 6px 6px 0;
+        }
+        .form-floating > label {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: #667eea;
+            font-weight: 600;
+        }
+        .reference-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .reference-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .reference-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+        .reference-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .reference-content {
+            flex: 1;
+        }
+        .reference-content h6 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .reference-content p {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .btn-reference {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+        }
+        .btn-reference:hover {
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+        @media (max-width: 768px) {
+            .main-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .cost-section {
+                grid-template-columns: 1fr;
+            }
+            .parameter-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 2rem;
+            }
+            .form-section {
+                padding: 25px;
+            }
+            .reference-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            .reference-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="main-container">
+            <div class="header">
+                <h1><i class="fas fa-calculator"></i> Manufacturing Calculator</h1>
+                <p>Advanced Product Cost Analysis & Price Chart Generator</p>
+            </div>
+
+            <!-- Reference Document Section -->
+            <div class="reference-section">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="reference-card">
+                                <div class="reference-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="reference-content">
+                                    <h6><i class="fas fa-external-link-alt"></i> Reference Document</h6>
+                                    <p>Martin Sprocket & Gear - Sprocket Catalog</p>
+                                    <a href="https://www.martinsprocket.com/docs//catalogs/power%20transmission/2_sprocket%20catalog/sprocket-catalog.pdf" 
+                                       target="_blank" class="btn btn-reference">
+                                        <i class="fas fa-download"></i> View Catalog PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="calculatorForm">
+                <div class="form-section">
+                    <div class="main-form-grid">
+                        <!-- Left Column - Product Parameters -->
+                        <div class="product-params">
+                            <h6>Product Parameters</h6>
+                            
+                            <!-- Product Parameters Grid -->
+                            <div class="parameter-grid">
+                                <!-- Chain Pitch -->
+                                <div class="parameter-item">
+                                    <div class="parameter-label">Chain Pitch</div>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="chainPitch" name="chainPitch" step="0.01" required>
+                                        <select class="unit-select" id="chainPitchUnit" data-field="chainPitch">
+                                            <option value="mm">mm</option>
+                                            <option value="inches">inches</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Number of Teeth -->
+                                <div class="parameter-item">
+                                    <div class="parameter-label">Number of Teeth</div>
+                                    <input type="number" class="form-control no-unit-input" id="numberOfTeeth" name="numberOfTeeth" required>
+                                </div>
+
+                                <!-- Chain Type -->
+                                <div class="parameter-item">
+                                    <div class="parameter-label">Chain Type</div>
+                                    <select class="form-select no-unit-input" id="chainType" name="chainType" required>
+                                        <option value="">Select Chain Type</option>
+                                        <option value="Simplex">Simplex</option>
+                                        <option value="Duplex">Duplex</option>
+                                        <option value="Triplex">Triplex</option>
+                                    </select>
+                                </div>
+
+                                <!-- Chain Roller Diameter -->
+                                <div class="parameter-item">
+                                    <div class="parameter-label">Chain Roller Diameter</div>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="chainRollerDiameter" name="chainRollerDiameter" step="0.01" required>
+                                        <select class="unit-select" id="chainRollerDiameterUnit" data-field="chainRollerDiameter">
+                                            <option value="mm">mm</option>
+                                            <option value="inches">inches</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- OD (Outer Diameter) -->
+                                <div class="parameter-item">
+                                    <div class="parameter-label">OD (Outer Diameter)</div>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="od" name="od" step="0.01" required>
+                                        <select class="unit-select" id="odUnit" data-field="od">
+                                            <option value="mm">mm</option>
+                                            <option value="inches">inches</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- HUB DIA -->
+                                <div class="parameter-item">
+                                    <div class="parameter-label">HUB DIA</div>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="hubDia" name="hubDia" step="0.01" required>
+                                        <select class="unit-select" id="hubDiaUnit" data-field="hubDia">
+                                            <option value="mm">mm</option>
+                                            <option value="inches">inches</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- HUB LENGTH -->
+                                <div class="parameter-item">
+                                    <div class="parameter-label">HUB LENGTH</div>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="hubLength" name="hubLength" step="0.01" required>
+                                        <select class="unit-select" id="hubLengthUnit" data-field="hubLength">
+                                            <option value="mm">mm</option>
+                                            <option value="inches">inches</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- ZZ -->
+                                <div class="parameter-item">
+                                    <div class="parameter-label">ZZ</div>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="zz" name="zz" step="0.01" required>
+                                        <select class="unit-select" id="zzUnit" data-field="zz">
+                                            <option value="mm">mm</option>
+                                            <option value="inches">inches</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column - PCD & Cost Parameters -->
+                        <div>
+                            <!-- PCD Section -->
+                            <div class="pcd-card">
+                                <h6>PCD (Pitch Circle Diameter)</h6>
+                                <div class="pcd-options">
+                                    <div class="pcd-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="pcdOption" id="pcdAuto" value="auto" checked>
+                                            <label class="form-check-label" for="pcdAuto">
+                                                <strong>Calculate Automatically</strong>
+                                            </label>
+                                        </div>
+                                        <div class="pcd-value-display" id="pcdAutoValue">
+                                            <span class="pcd-value">0.00 mm</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pcd-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="pcdOption" id="pcdManual" value="manual">
+                                            <label class="form-check-label" for="pcdManual">
+                                                <strong>Enter Manually</strong>
+                                            </label>
+                                        </div>
+                                        <div class="pcd-manual-input-inline" id="pcdManualInputInline" style="display: none;">
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="pcdManual" name="pcdManual" step="0.01" placeholder="Enter PCD">
+                                                <select class="unit-select" id="pcdManualUnit" data-field="pcdManual">
+                                                    <option value="mm">mm</option>
+                                                    <option value="inches">inches</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cost Parameters -->
+                            <div class="cost-section">
+                                <div class="cost-card">
+                                    <h5>Sprocket Costs</h5>
+                                    <div class="parameter-item mb-3">
+                                        <div class="parameter-label">RMC per KG</div>
+                                        <input type="number" class="form-control no-unit-input" id="sprocketRmcPerKg" name="sprocketRmcPerKg" step="0.01" required>
+                                    </div>
+                                    <div class="parameter-item mb-3">
+                                        <div class="parameter-label">PC (Processing Cost)</div>
+                                        <input type="number" class="form-control no-unit-input" id="sprocketPc" name="sprocketPc" step="0.01" required>
+                                    </div>
+                                    <div class="parameter-item">
+                                        <div class="parameter-label">HT (Heat Treatment)</div>
+                                        <input type="number" class="form-control no-unit-input" id="sprocketHt" name="sprocketHt" step="0.01" required>
+                                    </div>
+                                </div>
+                                <div class="cost-card">
+                                    <h5>Hub Costs</h5>
+                                    <div class="parameter-item mb-3">
+                                        <div class="parameter-label">RMC per KG</div>
+                                        <input type="number" class="form-control no-unit-input" id="hubRmcPerKg" name="hubRmcPerKg" step="0.01" required>
+                                    </div>
+                                    <div class="parameter-item mb-3">
+                                        <div class="parameter-label">PC (Processing Cost)</div>
+                                        <input type="number" class="form-control no-unit-input" id="hubPc" name="hubPc" step="0.01" required>
+                                    </div>
+                                    <div class="parameter-item">
+                                        <div class="parameter-label">HT (Heat Treatment)</div>
+                                        <input type="number" class="form-control no-unit-input" id="hubHt" name="hubHt" step="0.01" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section text-center">
+                    <button type="submit" class="btn btn-calculate">
+                        <i class="fas fa-calculator"></i> Calculate Costs & Generate Price Chart
+                    </button>
+                </div>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Calculating costs and generating price chart...</p>
+            </div>
+
+            <div id="results" style="display: none;">
+                <div class="results-section">
+                    <div class="product-name" id="productName"></div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="alert alert-info">
+                                <strong><i class="fas fa-circle-info"></i> PCD:</strong> <span id="pcdValue"></span> mm
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-success">
+                                <strong><i class="fas fa-coins"></i> Total Production Cost:</strong> ₹<span id="totalCost"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3"><i class="fas fa-list"></i> Component Cost Breakdown</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="componentTable">
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>RAW SIZE (mm)</th>
+                                    <th>LENGTH (mm)</th>
+                                    <th>RMC/KG</th>
+                                    <th>RMC</th>
+                                    <th>PC</th>
+                                    <th>HT</th>
+                                    <th>Production Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody id="componentTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5 class="mt-4 mb-3"><i class="fas fa-chart-line"></i> Price Chart</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="priceTable">
+                            <thead>
+                                <tr>
+                                    <th>Selling Price</th>
+                                    <th>Margin</th>
+                                    <th>Net Price (incl. 18% GST)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="priceTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-export" onclick="exportToPDF()">
+                            <i class="fas fa-file-pdf"></i> Export to PDF
+                        </button>
+                        <button class="btn btn-export" onclick="exportToExcel()">
+                            <i class="fas fa-file-excel"></i> Export to Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> 
